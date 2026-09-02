@@ -8,10 +8,10 @@ There were five concrete bugs in the codebase, not one. The agent initially miss
 The original code used `//` (floor division): `ratio = km_since_service // interval`, then multiplied by 100. For a car at 14,900 km with a 15,000 km interval that gives `14900 // 15000 = 0`, so the car reports 0% wear and is never flagged. The fix was to use true float division: `(km_since_service / interval) * 100`, which correctly returns ~99.3%.
 
 2. **Missing-reading handling in needs_service (km_wachter.py)**
-The original used `car.get("last_service_km", 0)`, treating a missing reading as 0 km. For VOS-7788 with odometer 92,000 and no `last_service_km`, that means 92,000 km since last service — 613% wear — so the car is wrongly flagged as needing service. The fix: if the key is absent, return False immediately. You cannot flag a car whose service history is unknown.
+The original used `car.get("last_service_km", 0)`, treating a missing reading as 0 km. For VOS-7788 with odometer 92,000 and no `last_service_km`, that means 92,000 km since last service — 613% wear — so the car is wrongly flagged as needing service. The fix: if the key is absent, return False immediately. You cannot flag a car whose service history is unknown. The agent's first attempt used `car.get("last_service_km", car["odometer"])` which passed the tests but obscured the intent — I caught the mismatch and had it corrected to an explicit key check.
 
 3. **Crash in fleet_report.car_wear on missing reading (fleet_report.py)**
-`car["last_service_km"]` raises a KeyError the moment any car lacks that key. The fix was to use `car.get("last_service_km")` and return 0.0 if the result is None.
+`car["last_service_km"]` raises a KeyError the moment any car lacks that key. The fix was to check explicitly for the key and return 0.0 if it is absent.
 
 4. **Integer division killing the average in fleet_report.fleet_summary (fleet_report.py)**
 `average = total // len(fleet)` drops all decimal places. For the two-car test case the true average is ~59.67% but the code returned 0. Changed `//` to `/`.
