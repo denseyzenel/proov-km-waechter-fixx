@@ -2,12 +2,19 @@
 
 ## What I checked
 
-In km_wachter.py:
+1. In km_wachter.py:
 
-1. The normal division ( / ) viz, 14,900 / 15,000 = 0.993 keeps the full answer, so wear = 99%.
+i. The normal division ( / ) viz, 14,900 / 15,000 = 0.993 keeps the full answer, so wear = 99%.
 But the older code had whole-number division ( // ) viz, 14,900 // 15,000 = 0 throws the decimal away, so wear = 0%, which was incorrect and gives flawed output.
 
-2. The needs_service function had `last = car.get("last_service_km", car["odometer"])` treating the last reading as 0 km if last_service_km is missing. Hence the code was then corrected to `if "last_service_km" not in car: return False` to avoid this error.
+ii. The needs_service function had `last = car.get("last_service_km", car["odometer"])` treating the last reading as 0 km if last_service_km is missing. Hence the code was then corrected to `if "last_service_km" not in car: return False` to avoid this error.
+
+3. In fleet_report.py,
+The whole number division again gave wrong output in average hence // was changed to /.
+
+4. In fleet_utils.py,
+1.609 is the km-per-mile conversion (how many km are in one mile), used backwards. So km_to_miles(100) was returning 160.9 instead of 62.1 where every nightly UK partner report showed distances roughly 2.6× too large. We changed it to 0.621371 (the correct miles-per-km factor).
+
 
 ## What the agent got wrong
 
