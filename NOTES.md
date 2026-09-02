@@ -32,7 +32,7 @@ test_summary_does_not_crash_on_missing_reading	✅ PASSED
 
 ## What the data actually said
 
-I read the CSV first with Python's built-in csv module to see the column names and value ranges. Then I compared the mean of every column between the broke-down group and the fine group, and ran an above-median test — what share of broke-down cars sit above the fine-group median for each column. A column that separates nothing gives about 50%.
+I read the CSV first with Python's built-in csv module to see the column names and value ranges. Then I compared the mean of every column between the broke-down group and the fine group, and ran an above-median test - what share of broke-down cars sit above the fine-group median for each column. A column that separates nothing gives about 50%.
 
 The results:
 odometer_km and age_years are noise - 0% and -0% gap, 50% and 42% above-median. Exactly what you'd expect from a coin flip.
@@ -45,6 +45,6 @@ Sanity check: 65% recall vs 22% for random guessing, with no machine learning �
 - `load_factor`: 77% above-median, 19% mean gap - second strongest.
 - `avg_daily_km`: 62% above-median, 22% mean gap - third.
 
-The obvious assumption — that older, higher-mileage cars break down more — is not what the data shows. Total mileage and age are indistinguishable between the two groups. What separates them is how overdue the car is for a service, how hard it is driven daily, and how heavily it is loaded.
+The older, higher-mileage cars break down more is not what the data shows. Total mileage and age are indistinguishable between the two groups. What separates them is how overdue the car is for a service, how hard it is driven daily, and how heavily it is loaded.
 
-The risk score weights those three columns by their mean-gap percentages (61/22/19), min-max normalises each one, and rescales the result to 0–100. The top 26 cars by score captured 17 of the 26 real breakdowns — 65% recall compared to 22% for random guessing.
+The risk score weights those three columns by their mean-gap percentages (61/22/19), min-max normalises each one, and rescales the result to 0–100. The top 26 cars by score captured 17 of the 26 real breakdowns with 65% recall compared to 22% for random guessing.
