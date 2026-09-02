@@ -11,11 +11,12 @@ import fleet_utils
 def car_wear(car: dict) -> float:
     """Return the car's current wear percentage.
 
-    Uses the same safe default as needs_service: if 'last_service_km' is
-    missing the car is treated as freshly serviced (km_since = 0).
+    If 'last_service_km' is missing the service history is unknown;
+    we return 0.0 so the car does not skew the fleet average.
     """
-    last = car.get("last_service_km", car["odometer"])
-    return wear_percent(car["odometer"] - last, SERVICE_INTERVAL_KM)
+    if "last_service_km" not in car:
+        return 0.0
+    return wear_percent(car["odometer"] - car["last_service_km"], SERVICE_INTERVAL_KM)
 
 
 def fleet_summary(fleet: list) -> dict:

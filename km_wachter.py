@@ -18,12 +18,12 @@ def wear_percent(km_since_service: float, interval: float) -> float:
 def needs_service(car: dict) -> bool:
     """Return True if the car has reached the warning threshold.
 
-    A missing 'last_service_km' key means the reading was never recorded,
-    not that the car was serviced at odometer 0.  We default to the current
-    odometer so km_since = 0 and the car is treated as freshly serviced.
+    A missing 'last_service_km' key means the service history is unknown.
+    We cannot flag a car whose history we do not have, so we return False.
     """
-    last = car.get("last_service_km", car["odometer"])
-    km_since = car["odometer"] - last
+    if "last_service_km" not in car:
+        return False
+    km_since = car["odometer"] - car["last_service_km"]
     pct = wear_percent(km_since, SERVICE_INTERVAL_KM)
     return pct >= WARN_AT_PERCENT
 
