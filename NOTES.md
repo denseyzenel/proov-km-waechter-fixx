@@ -20,16 +20,15 @@ The whole number division again gave wrong output in average hence // was change
 ## What I checked before I accepted its work
 
 - Ran `python verify.py` and read every line of output before and after the fixes.
+- Ran `python analyze.py` and confirmed it prints the full ranking without errors.
 - Checked that `SERVICE_INTERVAL_KM = 15000` and `WARN_AT_PERCENT = 80` were untouched in `km_wachter.py` and that `settings.cfg` still had the same values — both confirmed by verify.py checks 4 and 5.
 - Traced `wear_percent(14900, 15000)` by hand: `14900 / 15000 * 100 = 99.33` — above 80%, so the car is correctly flagged.
-- Traced `needs_service({"id": "VOS-7788", "odometer": 92000})` with the fixed code: key absent → returns False immediately, car is not flagged.
 - Ran `python -m pytest test_km_wachter.py test_fleet_report.py -v` and confirmed all 4 tests pass, as shown below.
   Test	Result
 test_almost_due_car_is_flagged	✅ PASSED
 test_missing_reading_is_not_treated_as_zero	✅ PASSED
 test_summary_counts_due_cars	✅ PASSED
 test_summary_does_not_crash_on_missing_reading	✅ PASSED
-- Ran `python analyze.py` and confirmed it prints the full ranking without errors.
 
 ## What the data actually said
 
@@ -38,7 +37,7 @@ I read the CSV first with Python's built-in csv module to see the column names a
 The results:
 odometer_km and age_years are noise - 0% and -0% gap, 50% and 42% above-median. Exactly what you'd expect from a coin flip.
 km_since_service is the dominant signal - 61% mean gap, 85% of broke-down cars above the fine-group median.
-Top 10: 8 out of 10 actually broke down , the score is picking the right cars.
+7 out of 10 broke down (VOS-1217, VOS-1032, and VOS-1130 did not).
 Sanity check: 65% recall vs 22% for random guessing, with no machine learning — just three weighted columns.
 - `odometer_km`: 50% above-median, 0.3% mean gap - coin flip, not predictive.
 - `age_years`: 42% above-median, -0.2% mean gap - lso noise, slightly negative.
